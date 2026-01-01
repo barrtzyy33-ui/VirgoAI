@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virgo AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .chat-container {
+            width: 100%;
+            max-width: 380px;
+            background-color: #2d2d2d;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 85vh;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header {
+            background-color: #0d0d0d;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #404040;
+        }
+        
+        .app-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        
+        .creator {
+            font-size: 14px;
+            color: #b3b3b3;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background-color: #00cc66;
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .assistant-label {
+            background-color: #404040;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 10px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .chat-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background-color: #1a1a1a;
+        }
+        
+        .welcome-message {
+            background-color: #2d2d2d;
+            padding: 16px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #00cc66;
+        }
+        
+        .welcome-message strong {
+            color: #00cc66;
+        }
+        
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            font-size: 15px;
+        }
+        
+        .bot-message {
+            background-color: #2d2d2d;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            color: #ffffff;
+            border: 1px solid #404040;
+        }
+        
+        .user-message {
+            background-color: #00cc66;
+            color: #000000;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+            font-weight: 500;
+        }
+        
+        .input-area {
+            padding: 15px;
+            background-color: #0d0d0d;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #404040;
+        }
+        
+        .input-area input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid #404040;
+            border-radius: 25px;
+            outline: none;
+            font-size: 15px;
+            background-color: #2d2d2d;
+            color: #ffffff;
+            transition: all 0.3s;
+        }
+        
+        .input-area input:focus {
+            border-color: #00cc66;
+            box-shadow: 0 0 0 2px rgba(0, 204, 102, 0.2);
+        }
+        
+        .input-area input::placeholder {
+            color: #808080;
+        }
+        
+        .send-btn {
+            background-color: #00cc66;
+            color: #000000;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+        
+        .send-btn:hover {
+            background-color: #00e673;
+            transform: scale(1.05);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #808080;
+            font-size: 13px;
+            width: 100%;
+            max-width: 380px;
+            padding: 10px;
+            border-top: 1px solid #404040;
+        }
+        
+        .powered-by {
+            font-size: 13px;
+            margin-top: 5px;
+            color: #00cc66;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background-color: #2d2d2d;
+            border-radius: 18px;
+            align-self: flex-start;
+            margin-bottom: 12px;
+            width: 70px;
+            border: 1px solid #404040;
+        }
+        
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #00cc66;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: typing 1.5s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+        
+        /* Scrollbar styling */
+        .chat-area::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-area::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        
+        .chat-area::-webkit-scrollbar-thumb {
+            background: #404040;
+            border-radius: 3px;
+        }
+        
+        .chat-area::-webkit-scrollbar-thumb:hover {
+            background: #00cc66;
+        }
+        
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-question {
+            background-color: #2d2d2d;
+            color: #ffffff;
+            border: 1px solid #404040;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-question:hover {
+            background-color: #00cc66;
+            color: #000;
+            border-color: #00cc66;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <div class="app-title">Virgo AI</div>
+            <div class="creator">Dibuat oleh BarrTzy</div>
+            <div class="creator">Asisten AI cerdas untuk percakapan yang bermanfaat</div>
+            <div class="version-badge">✔ v2.0</div>
+            <div class="assistant-label">All Assistant</div>
+        </div>
+        
+        <div class="chat-area" id="chatArea">
+            <div class="welcome-message">
+                Halo! Saya <strong>Virgo AI</strong>, asisten kecerdasan buatan yang dibuat oleh <strong>BarrTzy</strong>. Saya siap membantu Anda dengan berbagai percakapan yang informatif dan bermanfaat. Apa yang ingin kita bahas hari ini?
+            </div>
+            
+            <div class="quick-questions">
+                <div class="quick-question" onclick="askQuestion('Apa fungsi kamu?')">Apa fungsi kamu?</div>
+                <div class="quick-question" onclick="askQuestion('Siapa pembuatmu?')">Siapa pembuatmu?</div>
+                <div class="quick-question" onclick="askQuestion('Apa itu AI?')">Apa itu AI?</div>
+                <div class="quick-question" onclick="askQuestion('Kamu bisa apa?')">Kamu bisa apa?</div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Ketik pesan Anda di sini..." autocomplete="off">
+            <button class="send-btn" id="sendBtn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <div>2024 Virgo AI • Dibuat dengan oleh BarrTzy</div>
+        <div class="powered-by"></> Powered by BarrTzy AI Engine</div>
+    </div>
+
+    <script>
+        // Elemen DOM
+        const chatArea = document.getElementById('chatArea');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const typingIndicator = document.getElementById('typingIndicator');
+        
+        // Fungsi untuk menambahkan pesan ke chat
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.innerHTML = message;
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        // Respon AI berdasarkan input pengguna
+        function getAIResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            
+            // Daftar respon berdasarkan kata kunci
+            if (lowerMessage.includes('halo') || lowerMessage.includes('hai') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+                return "Halo! Senang bertemu dengan Anda. Ada yang bisa saya bantu hari ini?";
+            } else if (lowerMessage.includes('nama') && lowerMessage.includes('kamu')) {
+                return "Nama saya <strong>Virgo AI</strong>, asisten virtual yang dibuat oleh <strong>BarrTzy</strong>.";
+            } else if (lowerMessage.includes('buat') || lowerMessage.includes('pembuat') || lowerMessage.includes('creator')) {
+                return "Saya dibuat oleh <strong>BarrTzy</strong>, seorang pengembang perangkat lunak yang berbakat dan inovatif.";
+            } else if (lowerMessage.includes('fungsi') || lowerMessage.includes('bisa apa') || lowerMessage.includes('tugas')) {
+                return "Saya bisa membantu Anda dengan berbagai hal seperti: <br>• Menjawab pertanyaan umum<br>• Memberikan informasi<br>• Percakapan sehari-hari<br>• Rekomendasi sederhana<br>• Dan banyak lagi!";
+            } else if (lowerMessage.includes('terima kasih') || lowerMessage.includes('thanks') || lowerMessage.includes('makasih')) {
+                return "Sama-sama! Senang bisa membantu Anda. Jangan ragu untuk bertanya lagi jika butuh bantuan.";
+            } else if (lowerMessage.includes('bye') || lowerMessage.includes('selamat tinggal') || lowerMessage.includes('dadah') || lowerMessage.includes('sampai jumpa')) {
+                return "Selamat tinggal! Semoga hari Anda menyenangkan. Jangan lupa kembali jika butuh bantuan lagi!";
+            } else if (lowerMessage.includes('ai') || lowerMessage.includes('kecerdasan buatan') || lowerMessage.includes('artificial intelligence')) {
+                return "AI (Artificial Intelligence) adalah simulasi kecerdasan manusia dalam mesin yang diprogram untuk berpikir dan belajar. Saya adalah contoh penerapan AI untuk percakapan yang bermanfaat.";
+            } else if (lowerMessage.includes('versi') || lowerMessage.includes('version') || lowerMessage.includes('v2')) {
+                return "Saya menggunakan <strong>Virgo AI v2.0</strong>, versi terbaru dengan peningkatan kemampuan percakapan dan respons yang lebih baik.";
+            } else if (lowerMessage.includes('barrtzy') || lowerMessage.includes('pembuat')) {
+                return "<strong>BarrTzy</strong> adalah pembuat saya. Dia seorang pengembang yang menciptakan berbagai aplikasi dan tools bermanfaat seperti Virgo AI ini.";
+            } else if (lowerMessage.includes('bagaimana') && lowerMessage.includes('kabarmu')) {
+                return "Saya hanya program komputer, jadi tidak punya perasaan, tapi saya berfungsi dengan baik! Terima kasih sudah bertanya. Bagaimana dengan hari Anda?";
+            } else if (lowerMessage.includes('help') || lowerMessage.includes('bantuan') || lowerMessage.includes('tolong')) {
+                return "Anda bisa menanyakan apapun kepada saya! Coba tanya tentang: <br>• Siapa pembuat saya<br>• Apa itu AI<br>• Fungsi saya<br>• Atau topik lainnya!";
+            } else if (lowerMessage.includes('jam') || lowerMessage.includes('waktu')) {
+                const now = new Date();
+                return `Sekarang jam ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')} WIB.`;
+            } else if (lowerMessage.includes('tanggal') || lowerMessage.includes('hari ini')) {
+                const now = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                return `Hari ini adalah ${now.toLocaleDateString('id-ID', options)}.`;
+            } else {
+                // Respon default jika tidak ada kata kunci yang cocok
+                const defaultResponses = [
+                    "Menarik! Bisa Anda jelaskan lebih detail?",
+                    "Saya mengerti pertanyaan Anda. Ada hal lain yang ingin Anda tanyakan?",
+                    "Terima kasih untuk pertanyaannya. Saya masih terus belajar untuk memberikan jawaban yang lebih baik.",
+                    "Pertanyaan yang bagus! Saat ini saya fokus pada percakapan umum dan bantuan informasi dasar.",
+                    "Maaf, saya belum sepenuhnya memahami pertanyaan Anda. Bisa tolong diperjelas?",
+                    "Saya dibuat khusus untuk percakapan yang bermanfaat. Apakah ada topik spesifik yang ingin dibahas?",
+                    "Untuk pertanyaan itu, saya sarankan mencari informasi lebih lanjut dari sumber terpercaya.",
+                    "Sebagai AI, pengetahuan saya terbatas pada data yang saya miliki. Tapi saya akan coba membantu sebaik mungkin!"
+                ];
+                return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+            }
+        }
+        
+        // Fungsi untuk memproses input pengguna
+        function processUserInput() {
+            const message = userInput.value.trim();
+            
+            if (message === "") return;
+            
+            // Tambahkan pesan pengguna
+            addMessage(message, true);
+            userInput.value = "";
+            
+            // Tampilkan indikator mengetik
+            setTimeout(() => {
+                typingIndicator.style.display = 'block';
+                chatArea.scrollTop = chatArea.scrollHeight;
+                
+                // Simulasikan waktu berpikir AI
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    const aiResponse = getAIResponse(message);
+                    addMessage(aiResponse, false);
+                }, 800 + Math.random() * 1200);
+            }, 300);
+        }
+        
+        // Fungsi untuk pertanyaan cepat
+        function askQuestion(question) {
+            userInput.value = question;
+            processUserInput();
+        }
+        
+        // Event listeners
+        sendBtn.addEventListener('click', processUserInput);
+        
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                processUserInput();
+            }
+        });
+        
+        // Fokus ke input saat halaman dimuat
+        userInput.focus();
+        
+        // Contoh percakapan awal
+        setTimeout(() => {
+            typingIndicator.style.display = 'block';
+            chatArea.scrollTop = chatArea.scrollHeight;
+            
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                addMessage("Anda bisa mulai bertanya dengan mengetik di bawah, atau klik salah satu pertanyaan cepat di atas!", false);
+            }, 1500);
+        }, 2000);
+    </script>
+</body>
+</html>
